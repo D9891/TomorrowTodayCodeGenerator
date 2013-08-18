@@ -8,7 +8,7 @@ import scala.actors.Actor
 class ###REPLACEWITHNAME###(core:Actor) extends plugin(core) {
 
     //*** Here you find your prepared methods
-    ###AddMethods
+    ###ADDMETHODS
 
     //*** This is your main routine
     def main(){

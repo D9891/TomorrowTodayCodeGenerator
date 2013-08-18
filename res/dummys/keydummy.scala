@@ -5,5 +5,5 @@ import org.json4s.JsonDSL._
 
 
 class ###INSERTKEYNAME() extends ApiKey(###INSERTKEY) {
-
+      ###METHODS
 }
