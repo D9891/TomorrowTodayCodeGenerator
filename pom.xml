@@ -77,7 +77,7 @@
                     <target>1.5</target>
                 </configuration>
             </plugin>
-            <plugin>
+            <!-- WHY? plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-eclipse-plugin</artifactId>
                 <configuration>
@@ -93,37 +93,16 @@
                         <classpathContainer>ch.epfl.lamp.sdt.launching.SCALA_CONTAINER</classpathContainer>
                     </classpathContainers>
                 </configuration>
-            </plugin>
+            </plugin-->
 
             <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.3.1</version>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4</version>
                 <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>TomorrowTodayCodeGenerator.App</mainClass>
-                            <addClasspath>true</addClasspath>
-                            <classpathLayoutType>custom</classpathLayoutType>
-                            <customClasspathLayout>lib/$${artifact.artifactId}-$${artifact.version}$${dashClassifier?}.$${artifact.extension}
-                            </customClasspathLayout>
-                        </manifest>
-                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
                 </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.3</version>
-                <configuration>
-                    <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
