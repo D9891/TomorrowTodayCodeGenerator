@@ -2,6 +2,7 @@ package TomorrowTodayCodeGenerator
 
 import scala.reflect.io.{File, Path}
 import scala.collection.mutable.ArrayBuffer
+import java.io.InputStream
 
 
 /**
@@ -75,9 +76,9 @@ object App {
 
     def createMain(){
         val mainAppPath = Path(corePath+"/main.scala").toFile
-        val dummy = "/home/joern/programming/zyre/TomorrowTodayCodeGenerator/res/dummys/maindummy.scala"
+        val dummyIn = getClass.getClassLoader.getResourceAsStream("dummys/maindummy.scala")
         var mainapp = ArrayBuffer[String]()
-        scala.io.Source.fromFile(dummy).getLines.foreach(l => mainapp+=l)
+        scala.io.Source.fromInputStream(dummyIn).getLines.foreach(l => mainapp+=l)
 
         mainapp=setPluginName(mainapp)
         //mainapp.foreach(l=>println(l))
@@ -92,9 +93,9 @@ object App {
 
     def createKey(k: ApiKey){
         val thisKeyPath = Path(keyPath+"/"+k.name+".scala").toFile
-        val dummy = "/home/joern/programming/zyre/TomorrowTodayCodeGenerator/res/dummys/keydummy.scala"
+        val dummyIn = getClass.getClassLoader.getResourceAsStream("dummys/keydummy.scala")
         var code = ArrayBuffer[String]()
-        scala.io.Source.fromFile(dummy).getLines.foreach(l => code+=l)
+        scala.io.Source.fromInputStream(dummyIn).getLines.foreach(l => code+=l)
         code = setApiKeyName(code,k.name)
         code = setApiKeyText(code,k.getKeyString)
         code = setPluginName(code)
@@ -118,9 +119,9 @@ object App {
 
     def createCore(){
         val mainCore = Path(corePath+"/"+name+"core.scala").toFile
-        val dummy = "/home/joern/programming/zyre/TomorrowTodayCodeGenerator/res/dummys/coredummy.scala"
+        val dummyIn = getClass.getClassLoader.getResourceAsStream("dummys/coredummy.scala")
         var code = ArrayBuffer[String]()
-        scala.io.Source.fromFile(dummy).getLines.foreach(l => code+=l)
+        scala.io.Source.fromInputStream(dummyIn).getLines.foreach(l => code+=l)
 
         code=setPluginName(code)
         createCaseClasses()
@@ -174,9 +175,9 @@ object App {
         }
 
         def createFktDo(fkt: fkt,k: ApiKey){
-            val dummy = "/home/joern/programming/zyre/TomorrowTodayCodeGenerator/res/dummys/dodummy.scala"
+            val dummyIn = getClass.getClassLoader.getResourceAsStream("dummys/dodummy.scala")
             var docode = ArrayBuffer[String]()
-            scala.io.Source.fromFile(dummy).getLines.foreach(l => docode+=l)
+            scala.io.Source.fromInputStream(dummyIn).getLines.foreach(l => docode+=l)
             docode = setApiKeyName(docode,k.name)
             docode = setFktName(docode,fkt.name)
             var target = findTarget(docode,"###OUTPUTS")
@@ -227,9 +228,9 @@ object App {
         }
 
         def createFktRecv(fkt: fkt, k: ApiKey){
-            val dummy = "/home/joern/programming/zyre/TomorrowTodayCodeGenerator/res/dummys/recvdummy.scala"
+            val dummyIn = getClass.getClassLoader.getResourceAsStream("dummys/recvdummy.scala")
             var docode = ArrayBuffer[String]()
-            scala.io.Source.fromFile(dummy).getLines.foreach(l => docode+=l)
+            scala.io.Source.fromInputStream(dummyIn).getLines.foreach(l => docode+=l)
             docode = setFktName(docode,fkt.name)
 
             var j=1
@@ -258,9 +259,9 @@ object App {
         }
 
         def createHandleGetter(k: ApiKey){
-            val dummy = "/home/joern/programming/zyre/TomorrowTodayCodeGenerator/res/dummys/keyhandlegetterdummy.scala"
+            val dummyIn = getClass.getClassLoader.getResourceAsStream("dummys/keyhandlegetterdummy.scala")
             var docode = ArrayBuffer[String]()
-            scala.io.Source.fromFile(dummy).getLines.foreach(l => docode+=l)
+            scala.io.Source.fromInputStream(dummyIn).getLines.foreach(l => docode+=l)
             docode = setApiKeyName(docode,k.name)
             var dotarget = findTarget(code,"###ADDKEYHANDLEGETTERS")
             docode.foreach(l=>{
@@ -272,7 +273,7 @@ object App {
 
     def createPlugin(){
         val plugin = Path(pluginPath+"/"+name+".scala").toFile
-        var code = loadDummyCode("/home/joern/programming/zyre/TomorrowTodayCodeGenerator/res/dummys/plugindummy.scala")
+        var code = loadDummyCode(getClass.getClassLoader.getResourceAsStream("dummys/plugindummy.scala"))
         code=setPluginName(code)
         createImplementedMethods()
         createKeyHandles()
@@ -290,7 +291,7 @@ object App {
         }
 
         def createImplementedFktMethod(fkt: fkt,k: ApiKey){
-            var docode = loadDummyCode("/home/joern/programming/zyre/TomorrowTodayCodeGenerator/res/dummys/pluginmethoddummy.scala")
+            var docode = loadDummyCode(getClass.getClassLoader.getResourceAsStream("dummys/pluginmethoddummy.scala"))
             docode = setFktName(docode,fkt.name)
 
             var j=1
@@ -379,7 +380,7 @@ object App {
         }
 
         def createImportedFktMethod(fkt: fkt,k: ApiKey){
-            var docode = loadDummyCode("/home/joern/programming/zyre/TomorrowTodayCodeGenerator/res/dummys/pluginreceivemethoddummy.scala")
+            var docode = loadDummyCode(getClass.getClassLoader.getResourceAsStream("dummys/pluginreceivemethoddummy.scala"))
             docode = setFktName(docode,fkt.name)
 
             var j=1
@@ -404,7 +405,7 @@ object App {
 
     def createPom(){
         val pom = Path(rootPath+"/"+name+"/pom.xml").toFile
-        var code = loadDummyCode("/home/joern/programming/zyre/TomorrowTodayCodeGenerator/res/dummys/pomdummy.xml")
+        var code = loadDummyCode(getClass.getClassLoader.getResourceAsStream("dummys/pomdummy.xml"))
         code=setPluginName(code)
         writeCodeToFile(pom,code)
 
@@ -415,7 +416,7 @@ object App {
     def replaceCode(target:String, code: ArrayBuffer[String], docode: String): ArrayBuffer[String] = {
         val newcode = ArrayBuffer[String]()
         code.foreach(l=>newcode+=l.replace(target,docode))
-        return newcode
+        newcode
     }
 
     def insertAtTarget(code: ArrayBuffer[String],docode: ArrayBuffer[String],target: String):ArrayBuffer[String]={
@@ -424,13 +425,13 @@ object App {
             code.insert(dotarget,l)
             dotarget+=1
         })
-        return code
+        code
     }
 
-    def loadDummyCode(path: String):ArrayBuffer[String]={
+    def loadDummyCode(is: InputStream):ArrayBuffer[String]={
         var code = ArrayBuffer[String]()
-        scala.io.Source.fromFile(path).getLines.foreach(l => code+=l)
-        return code
+        scala.io.Source.fromInputStream(is).getLines.foreach(l => code+=l)
+        code
     }
 
     def cleanUp(code: ArrayBuffer[String]): ArrayBuffer[String]={
@@ -447,12 +448,12 @@ object App {
                 .replace("###ADDVARS","")
                 .replace("###ADDCASECLASSESHERE","")
         })
-        return newCode
+        newCode
     }
     def setFktName(code: ArrayBuffer[String], fktname: String): ArrayBuffer[String] = {
         val newcode = ArrayBuffer[String]()
         code.foreach(l => newcode+=l.replace("###FKTNAME",fktname))
-        return newcode
+        newcode
     }
     def findTarget(code: ArrayBuffer[String],targetString: String): Int={
         var i = 0
@@ -461,12 +462,12 @@ object App {
             if(l.contains(targetString)) target = i
             i+=1
         })
-        return target
+        target
     }
     def createImportFunction(fkt: fkt, keyName: String): ArrayBuffer[String] = {
-        val dummy = "/home/joern/programming/zyre/TomorrowTodayCodeGenerator/res/dummys/keymethoddummy.scala"
+        val dummyIn = getClass.getClassLoader.getResourceAsStream("dummys/keymethoddummy.scala")
         var code = ArrayBuffer[String]()
-        scala.io.Source.fromFile(dummy).getLines.foreach(l => code+=l)
+        scala.io.Source.fromInputStream(dummyIn).getLines.foreach(l => code+=l)
         var newcode = ArrayBuffer[String]()
 
         code = setFktName(code, fkt.name)
@@ -486,7 +487,7 @@ object App {
             target+=1
             })
 
-        return code
+        code
     }
 
     def setApiKeyText(code: ArrayBuffer[String], keyString: String):ArrayBuffer[String] = {
@@ -494,13 +495,13 @@ object App {
         code.foreach(l => newcode+=l.replace("###INSERTKEY","\""+keyString
             .replace("\n","")
             .replace("\"","\\\"").trim()+"\""))
-        return newcode
+        newcode
     }
 
     def setApiKeyName(code: ArrayBuffer[String], keyName: String):ArrayBuffer[String] = {
         var newcode = ArrayBuffer[String]()
         code.foreach(l => newcode+=l.replace("###INSERTKEYNAME",keyName))
-        return newcode
+        newcode
     }
 
     def writeCodeToFile(file: File, code: ArrayBuffer[String]){
@@ -513,7 +514,7 @@ object App {
     def setPluginName(code: ArrayBuffer[String]):ArrayBuffer[String]={
         var newcode = ArrayBuffer[String]()
         code.foreach(l => newcode+=l.replace("###REPLACEWITHNAME###",name))
-        return newcode
+        newcode
     }
 
 }
